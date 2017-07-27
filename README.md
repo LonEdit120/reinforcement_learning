@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # 7/26 Reinforcement Learning (Q-Learning)
 
 ## [Example Code by royel](https://github.com/Royeqiu/ReinforcementLearningExample)
@@ -24,9 +23,3 @@
 - jump probability : 為了防止有路線沒被走到.有不選當前最高分的可能性（不能太高）
 
 ![](https://i.imgur.com/Au6Pkj6.png)
-
-
-=======
-# reinforcement_learning
-# reinforcement_learning
->>>>>>> fd16260853054e87c90f320588520a77397f5fcb
