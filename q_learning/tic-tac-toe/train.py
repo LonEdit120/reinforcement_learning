@@ -73,7 +73,7 @@ def place(who, loc):
 
 while trainTimes != 0:
     if trainTimes % 5000 == 0:
-        print('Remaining train times : ' + str(trainTimes) + ' @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
+        print('Remaining train times : ' + str(trainTimes))
     # Initialize
     trainTimes -= 1
     turn = -1
@@ -113,6 +113,7 @@ while trainTimes != 0:
                 game = place('O',choose[rand])
 
             if whoWon(game) == 'O':
+                circle.update(whoWon(game),OpreKey,OcurKey)
                 cross.update(whoWon(game),XpreKey,XcurKey)
                 # print ('Winner : O')
                 # print('============================================================================')
@@ -127,6 +128,7 @@ while trainTimes != 0:
                             cnt += 1
                 if cnt == 9:
                     circle.update('even',OpreKey,OcurKey)
+                    cross.update('even',OpreKey,OcurKey)
                     # print('Even !')
                     break
             OcurKey = hash(game)
@@ -170,6 +172,7 @@ while trainTimes != 0:
 
             if whoWon(game) == 'X':
                 circle.update(whoWon(game),OpreKey,OcurKey)
+                cross.update(whoWon(game),XpreKey,XcurKey)
                 # print ('Winner : X')
                 # print('============================================================================')
                 # circle.getBoard()
@@ -182,6 +185,7 @@ while trainTimes != 0:
                         if b != '?':
                             cnt += 1
                 if cnt == 9:
+                    circle.update('even',OpreKey,OcurKey)
                     cross.update('even',OpreKey,OcurKey)
                     # print('Even !')
                     break

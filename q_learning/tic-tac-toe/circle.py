@@ -1,66 +1,47 @@
 discount = 0.9
 learnRate = 0.1
-scoreBoard = []
-preKey = 0
-curKey = 0
-newScore = 0
-def setCurKey(key):
-    curKey = key
-
-def setPreKey(key):
-    preKey = key
+scores = {}
 
 def checkExist(key):
-    if not scoreBoard:
+    if not scores:
         return True
     else:
-        for temp in scoreBoard:
-            if temp["key"] == key:
-                return True
-            else:
-                return False
+        if key not in scores:
+            return True
+        else:
+            return False
 
 def getScore(key):
-    if key not in scoreBoard:
+    if key not in scores:
         return 0
     else:
-        for temp in scoreBoard:
-            if temp["key"] == key:
-                return temp["score"]
+        return scores[key]
+
 
 def update(winner,preKey,curKey):
     # print('Os preKey : ' + str(preKey))
     # print('Os curKey : ' + str(curKey))
 
-    exist = False
-    for i in range(len(scoreBoard)):
-        if scoreBoard[i]["key"] == curKey:
-            curScore = scoreBoard[i]["score"]
-            exist = True
-            break
-    if (not exist):
+    if curKey not in scores:
         curScore = 0
-        scoreBoard.append({"key":curKey,"score":0})
+        scores[curKey] = 0
+    else:
+        curScore = scores[curKey]
 
-    exist = False
-    for j in range(len(scoreBoard)):
-        if scoreBoard[j]["key"] == preKey:
-            preScore = scoreBoard[j]["score"]
-            exist = True
-            break
-    if (not exist):
-        scoreBoard.append({"key":preKey,"score":0})
+    if preKey not in scores:
         preScore = 0
-        #print('bugged : O preKey ' + str(preKey) + ' not found===========')
+        scores[preKey] = 0
+    else:
+        preScore = scores[preKey]
 
     if winner == 'X':
-        scoreBoard[j]["score"] = preScore + learnRate * ((-1) - curScore)
+        scores[preKey] = preScore + learnRate * ((-1) - curScore)
     if winner == 'O':
-        scoreBoard[j]["score"] = preScore + learnRate * ((1) - curScore)
+        scores[preKey] = preScore + learnRate * ((1) - curScore)
     if winner == 'even':
-        scoreBoard[j]["score"] = preScore + learnRate * ((0.3) - curScore)
+        scores[preKey] = preScore + learnRate * ((0.3) - curScore)
     if curScore > preScore:
-        scoreBoard[j]["score"] = preScore + learnRate * (0 + discount * curScore - preScore)
+        scores[preKey] = preScore + learnRate * (0 + discount * curScore - preScore)
 
     # print('Os scoreBoard :')
     # for temp in scoreBoard:
@@ -68,12 +49,12 @@ def update(winner,preKey,curKey):
 
 def getBoard():
     print('Os scoreBoard :')
-    for temp in scoreBoard:
-        print(temp)
+    for temp in scores:
+        print('Key : ' + str(temp) + ' Score : ' + str(scores[temp]))
 
 def toFile():
     with open('circleTrainData.txt','w+') as f:
         f.write('          KEY                                SCORE\n')
-        for temp in scoreBoard:
-            f.write('{0:20d}                  '.format(temp['key']) + str(temp['score'])+'\n')
-    print('Circle train data successfully imported to circleTrainData.txt !')
+        for temp in scores:
+            f.write('{0:20d}                  '.format(temp) + str(scores[temp]) + '\n')
+    print('Circle data successfully imported to circleTrainData.txt !')
