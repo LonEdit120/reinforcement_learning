@@ -41,9 +41,12 @@ def update(winner,preKey,curKey):
         scores[preKey] = preScore + learnRate * (0 + discount * curScore - preScore)
 
 def getBoard():
+    global scores
     print('Xs scoreBoard :')
     for temp in scores:
         print('Key : ' + str(temp) + ' Score : ' + str(scores[temp]))
+    return scores
+
 
 def toFile():
     with open('crossTrainData.txt','w+') as f:

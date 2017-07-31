@@ -3,7 +3,11 @@ import cross
 import random
 
 jump = 0.2
-game = (('?','?','?'),('?','?','?'),('?','?','?'))
+game = ((' ',' ',' '),(' ',' ',' '),(' ',' ',' '))
+
+def clearMap():
+    global game
+    game = ((' ',' ',' '),(' ',' ',' '),(' ',' ',' '))
 
 def showMap(game):
     for temp in game:
@@ -49,6 +53,13 @@ def whoWon(game):
         return 'X'
     if game[0][2] == 'X' and game[1][1] == 'X' and game[2][0] == 'X':
         return 'X'
+    cnt = 0
+    for a in game:
+        for b in a:
+            if b != ' ':
+                cnt += 1
+    if cnt == 9:
+        return 'even'
     return 'nobody'
 
 def place(who, loc, game):
@@ -60,12 +71,26 @@ def place(who, loc, game):
     temp = tuple(tuple(x) for x in gameList)
     return temp
 
+def defPlace(who, loc, temp):
+    global game
+    game = place(who, loc, temp)
+
+def getGame():
+    print('Current Game :\n')
+    global game
+    for i in range(len(game)):
+        print (' ' + game[i][0] + ' | ' + game[i][1] + ' | ' + game[i][2])
+        if i != 2:
+            print('-----------')
+    return game
+
 def train(trainTimes):
     OpreKey = 0
     OcurKey = 0
     XpreKey = 0
     XcurKey = 0
-    game = (('?','?','?'),('?','?','?'),('?','?','?'))
+    global game
+    game = ((' ',' ',' '),(' ',' ',' '),(' ',' ',' '))
 
     while trainTimes != 0:
         if trainTimes % 5000 == 0:
@@ -73,7 +98,6 @@ def train(trainTimes):
         # Initialize
         trainTimes -= 1
         turn = -1
-        game = (('?','?','?'),('?','?','?'),('?','?','?'))
         OpreKey = hash(game)
         while True:
             turn *= -1
@@ -83,7 +107,7 @@ def train(trainTimes):
                 # print('circle')
                 for i in range(len(game)):
                     for j in range(len(game[i])):
-                        if game[i][j] == '?':
+                        if game[i][j] == ' ':
                             tempGame = game
                             tempGame = place('O',3*i+j,game)
                             if circle.checkExist(hash(tempGame)):
@@ -116,17 +140,11 @@ def train(trainTimes):
                     # circle.getBoard()
                     # cross.getBoard()
                     break
-                else:
-                    cnt = 0
-                    for a in game:
-                        for b in a:
-                            if b != '?':
-                                cnt += 1
-                    if cnt == 9:
-                        circle.update('even',OpreKey,OcurKey)
-                        cross.update('even',OpreKey,OcurKey)
-                        # print('Even !')
-                        break
+                elif whoWon(game) == 'even':
+                    circle.update('even',OpreKey,OcurKey)
+                    cross.update('even',OpreKey,OcurKey)
+                    # print('Even !')
+                    break
                 OcurKey = hash(game)
                 # showMap(game)
                 circle.update(whoWon(game),OpreKey,OcurKey)
@@ -140,7 +158,7 @@ def train(trainTimes):
                 # print('Cross')
                 for i in range(len(game)):
                     for j in range(len(game[i])):
-                        if game[i][j] == '?':
+                        if game[i][j] == ' ':
                             tempGame = game
                             tempGame = place('X',3*i+j,game)
                             if cross.checkExist(hash(tempGame)):
@@ -178,7 +196,7 @@ def train(trainTimes):
                     cnt = 0
                     for a in game:
                         for b in a:
-                            if b != '?':
+                            if b != ' ':
                                 cnt += 1
                     if cnt == 9:
                         circle.update('even',OpreKey,OcurKey)
@@ -190,5 +208,6 @@ def train(trainTimes):
                 cross.update(whoWon(game),XpreKey,XcurKey)
                 XpreKey = XcurKey
                 # print('----------------------------------------------------------------------------------------------')
+        game = ((' ',' ',' '),(' ',' ',' '),(' ',' ',' '))
     circle.toFile()
     cross.toFile()
