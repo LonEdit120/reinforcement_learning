@@ -17,10 +17,7 @@ def getScore(key):
     else:
         return scores[key]
 
-
 def update(winner,preKey,curKey):
-    # print('Os preKey : ' + str(preKey))
-    # print('Os curKey : ' + str(curKey))
 
     if curKey not in scores:
         curScore = 0
@@ -42,10 +39,6 @@ def update(winner,preKey,curKey):
         scores[preKey] = preScore + learnRate * ((0.3) - curScore)
     if curScore > preScore:
         scores[preKey] = preScore + learnRate * (0 + discount * curScore - preScore)
-
-    # print('Os scoreBoard :')
-    # for temp in scoreBoard:
-    #     print(temp)
 
 def getBoard():
     print('Os scoreBoard :')
