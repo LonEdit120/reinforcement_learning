@@ -6,7 +6,7 @@ action = [-1,1]
 discount = 0.9
 learnRate = 0.1
 jump = 0.05
-trainTimes = 100
+trainTimes = 20
 
 steps = []
 
@@ -94,8 +94,8 @@ for i in range(trainTimes):
                     pre = loc
                     loc += rand
     steps.append(step)
-    print ('Round ' + "{:0>2d}".format(i) + ', step : ' + str(step))
-print ('At Round : ' + str(steps.index(min(steps))) + ', we found the best solution ' + str(min(steps)) +' steps.')
+    print ('Round ' + "{:0>2d}".format(i+1) + ', step : ' + str(step))
+print ('At Round : ' + str(steps.index(min(steps))+1) + ', we found the best solution ' + str(min(steps)) +' steps.')
 
 print ('Total State length : ' + str(len(reward)))
 
