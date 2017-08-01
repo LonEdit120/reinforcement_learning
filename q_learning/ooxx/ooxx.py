@@ -11,7 +11,14 @@ print(' 3 | 4 | 5 ')
 print('-----------')
 print(' 6 | 7 | 8 ')
 
-#  N = 876543210
+jump = 0.6
+Opre = 0
+Ocur = 0
+Xpre = 0
+Xcur = 0
+game = 0
+side = True
+times = 100000
 dangerZone = []
 
 def getValueAtIndex(index, res):
@@ -26,6 +33,7 @@ def checkResult(board):
         if getValueAtIndex(i, board) != 0:
             cnt += 1
         else:
+            game = 0
             break
     # 1 or 2 win
     if cnt == 9:
@@ -136,192 +144,205 @@ def printScores():
         print (' ' + tempList[6] + ' | ' + tempList[7] + ' | ' + tempList[8])
         print ('Score : ' + str(scores[temp]) + '\n===============================================================================')
 
-jump = 0.6
-Opre = 0
-Ocur = 0
-Xpre = 0
-Xcur = 0
-game = 0
-side = True
-times = 100000
-scores = {}
-winBlock = []
-badBlock = []
-# game = 120022100
+def getGame():
+    global game
+    return game
 
-
-while times != 0:
-    if times % 5000 == 0:
-        print('Remaining train times : ' + str(times))
-        jump = jump - 0.03
-
+def clearGame():
+    global game
     game = 0
-    times -= 1
-    Ocur = game
-    Xpre = 0
-    # Initialize
-    dontSkip = True
+
+def train():
+    global jump
+    global Opre
+    global Ocur
+    global Xpre
+    global Xcur
+    global game
+    global side
+    global times
+    scores = {}
     winBlock = []
     badBlock = []
+    # game = 120022100
 
-    while True:
+
+    while times != 0:
+        if times % 5000 == 0:
+            print('Remaining train times : ' + str(times))
+            jump = jump - 0.03
+
+        game = 0
+        times -= 1
+        Ocur = game
+        Xpre = 0
         # Initialize
-        danger = False
-        if side:
-            Opre = Ocur
-            for i in range(9):# SEEK VICTORY
-                if getValueAtIndex(i, game) == 0:
-                    if checkResult(place(1,i)) == 1:
-                        dontSkip = False
-                        winBlock.append(i)
+        dontSkip = True
+        winBlock = []
+        badBlock = []
 
-            if dontSkip:
-                shutdown(2)
-                if not dangerZone:# SAFE (empty)
-                    danger = False
-                    tempScore = []
-                    # print(game)
+        while True:
+            # Initialize
+            danger = False
+            if side:
+                Opre = Ocur
+                for i in range(9):# SEEK VICTORY
+                    if getValueAtIndex(i, game) == 0:
+                        if checkResult(place(1,i)) == 1:
+                            dontSkip = False
+                            winBlock.append(i)
+
+                if dontSkip:
+                    shutdown(2)
+                    if not dangerZone:# SAFE (empty)
+                        danger = False
+                        tempScore = []
+                        # print(game)
+                        for i in range(9):
+                            if getValueAtIndex(i, game) == 0:
+                                circle.update(checkResult(place(1,i)), Opre, place(1,i))
+                                tempScore.append(circle.getScore(place(1,i)))
+                            else:
+                                tempScore.append(-100)
+                        tempIndex = []
+                        if random.random() > jump or max(tempScore) == 0:
+                            for i in range(len(tempScore)):
+                                if tempScore[i] == max(tempScore):
+                                    tempIndex.append(i)
+                        else:
+                            # print('jumped !')
+                            # printGame()
+                            for i in range(len(tempScore)):
+                                #print(tempScore[i])
+                                if (tempScore[i] != max(tempScore)) and tempScore[i] >= 0:
+                                    tempIndex.append(i)
+                            if len(tempIndex) == 0:
+                                tempIndex.append(tempScore.index(max(tempScore)))
+                        temp = len(tempIndex)-1
+                        # print ('WTF?' + str(temp))
+                        # print(tempScore)
+                        rand = random.randint(0,temp)
+                        fill(1,tempIndex[rand])
+                    else:             # DANGER
+
+                        danger = True
+                        for temp in dangerZone:
+                            circle.update(3,Opre,place(1,temp))
+                        scores = circle.getBoard()
+                        # printScores()
+                        temp = len(dangerZone)-1
+                        rand = random.randint(0,temp)
+                        fill(1,dangerZone[rand])
+                else:
+
+                    # VICTORY MOVE
                     for i in range(9):
                         if getValueAtIndex(i, game) == 0:
-                            circle.update(checkResult(place(1,i)), Opre, place(1,i))
-                            tempScore.append(circle.getScore(place(1,i)))
-                        else:
-                            tempScore.append(-100)
-                    tempIndex = []
-                    if random.random() > jump or max(tempScore) == 0:
-                        for i in range(len(tempScore)):
-                            if tempScore[i] == max(tempScore):
-                                tempIndex.append(i)
-                    else:
-                        # print('jumped !')
-                        # printGame()
-                        for i in range(len(tempScore)):
-                            #print(tempScore[i])
-                            if (tempScore[i] != max(tempScore)) and tempScore[i] >= 0:
-                                tempIndex.append(i)
-                        if len(tempIndex) == 0:
-                            tempIndex.append(tempScore.index(max(tempScore)))
-                    temp = len(tempIndex)-1
-                    # print ('WTF?' + str(temp))
-                    # print(tempScore)
-                    rand = random.randint(0,temp)
-                    fill(1,tempIndex[rand])
-                else:             # DANGER
+                            if checkResult(place(1,i)) != 1:
+                                badBlock.append(i)
+                    # print ('WinBlocks:')
+                    # print(winBlock)
+                    # print ('BadBlocks:')
+                    # print(badBlock)
 
-                    danger = True
-                    for temp in dangerZone:
-                        circle.update(3,Opre,place(1,temp))
+                    for temp in winBlock:
+                        circle.update(1, Opre, place(1,temp))
                     scores = circle.getBoard()
                     # printScores()
-                    temp = len(dangerZone)-1
-                    rand = random.randint(0,temp)
-                    fill(1,dangerZone[rand])
+                    for temp in badBlock:
+                        circle.update(2, Opre, place(1,temp))
+                    scores = circle.getBoard()
+                    # printScores()
+                    game = 0
+                    break
+                if checkResult(game) == 3:
+                    circle.update(3, Opre, game)
+                    game = 0
+                    break
+                Ocur = game
+                side = not side
+                # printGame()
+                # print('------------------')
+            ####################################################################################
             else:
-
-                # VICTORY MOVE
-                for i in range(9):
+                if Xpre == 0:
+                    Xpre = Ocur
+                else:
+                    Xpre = Xcur
+                for i in range(9):# SEEK VICTORY
                     if getValueAtIndex(i, game) == 0:
-                        if checkResult(place(1,i)) != 1:
-                            badBlock.append(i)
-                # print ('WinBlocks:')
-                # print(winBlock)
-                # print ('BadBlocks:')
-                # print(badBlock)
+                        if checkResult(place(2,i)) == 2:
+                            dontSkip = False
+                            winBlock.append(i)
 
-                for temp in winBlock:
-                    circle.update(1, Opre, place(1,temp))
-                scores = circle.getBoard()
-                # printScores()
-                for temp in badBlock:
-                    circle.update(2, Opre, place(1,temp))
-                scores = circle.getBoard()
-                # printScores()
-                break
-            if checkResult(game) == 3:
-                circle.update(3, Opre, game)
-                break
-            Ocur = game
-            side = not side
-            # printGame()
-            # print('------------------')
-        ####################################################################################
-        else:
-            if Xpre == 0:
-                Xpre = Ocur
-            else:
-                Xpre = Xcur
-            for i in range(9):# SEEK VICTORY
-                if getValueAtIndex(i, game) == 0:
-                    if checkResult(place(2,i)) == 2:
-                        dontSkip = False
-                        winBlock.append(i)
-
-            if dontSkip:
-                shutdown(1)
-                if not dangerZone:# SAFE (empty)
-                    danger = False
-                    tempScore = []
+                if dontSkip:
+                    shutdown(1)
+                    if not dangerZone:# SAFE (empty)
+                        danger = False
+                        tempScore = []
+                        for i in range(9):
+                            if getValueAtIndex(i, game) == 0:
+                                cross.update(checkResult(place(2,i)), Xpre, place(2,i))
+                                tempScore.append(cross.getScore(place(2,i)))
+                            else:
+                                tempScore.append(-200)
+                        tempIndex = []
+                        if random.random() > jump or max(tempScore) == 0:
+                            for i in range(len(tempScore)):
+                                if tempScore[i] == max(tempScore):
+                                    tempIndex.append(i)
+                        else:
+                            # print('jumped !')
+                            # printGame()
+                            for i in range(len(tempScore)):
+                                #print(tempScore[i])
+                                if (tempScore[i] != max(tempScore)) and tempScore[i] >= 0:
+                                    tempIndex.append(i)
+                            if len(tempIndex) == 0:
+                                tempIndex.append(tempScore.index(max(tempScore)))
+                        temp = len(tempIndex)-1
+                        # print ('WTF?' + str(temp))
+                        # print(tempScore)
+                        rand = random.randint(0,temp)
+                        fill(2,tempIndex[rand])
+                    else:             # DANGER
+                        danger = True
+                        for temp in dangerZone:
+                            cross.update(3,Xpre,place(2,temp))
+                        scores = cross.getBoard()
+                        # printScores()
+                        temp = len(dangerZone)-1
+                        rand = random.randint(0,temp)
+                        fill(2,dangerZone[rand])
+                else:
+                    # VICTORY MOVE
                     for i in range(9):
                         if getValueAtIndex(i, game) == 0:
-                            cross.update(checkResult(place(2,i)), Xpre, place(2,i))
-                            tempScore.append(cross.getScore(place(2,i)))
-                        else:
-                            tempScore.append(-200)
-                    tempIndex = []
-                    if random.random() > jump or max(tempScore) == 0:
-                        for i in range(len(tempScore)):
-                            if tempScore[i] == max(tempScore):
-                                tempIndex.append(i)
-                    else:
-                        # print('jumped !')
-                        # printGame()
-                        for i in range(len(tempScore)):
-                            #print(tempScore[i])
-                            if (tempScore[i] != max(tempScore)) and tempScore[i] >= 0:
-                                tempIndex.append(i)
-                        if len(tempIndex) == 0:
-                            tempIndex.append(tempScore.index(max(tempScore)))
-                    temp = len(tempIndex)-1
-                    # print ('WTF?' + str(temp))
-                    # print(tempScore)
-                    rand = random.randint(0,temp)
-                    fill(2,tempIndex[rand])
-                else:             # DANGER
-                    danger = True
-                    for temp in dangerZone:
-                        cross.update(3,Xpre,place(2,temp))
+                            if checkResult(place(2,i)) != 2:
+                                badBlock.append(i)
+                    # print ('WinBlocks:')
+                    # print(winBlock)
+                    # print ('BadBlocks:')
+                    # print(badBlock)
+
+                    for temp in winBlock:
+                        cross.update(2, Xpre, place(2,temp))
                     scores = cross.getBoard()
                     # printScores()
-                    temp = len(dangerZone)-1
-                    rand = random.randint(0,temp)
-                    fill(2,dangerZone[rand])
-            else:
-                # VICTORY MOVE
-                for i in range(9):
-                    if getValueAtIndex(i, game) == 0:
-                        if checkResult(place(2,i)) != 2:
-                            badBlock.append(i)
-                # print ('WinBlocks:')
-                # print(winBlock)
-                # print ('BadBlocks:')
-                # print(badBlock)
+                    for temp in badBlock:
+                        cross.update(1, Xpre, place(2,temp))
+                    scores = cross.getBoard()
+                    # printScores()
+                    game = 0
+                    break
+                if checkResult(game) == 3:
+                    cross.update(3, Xpre, game)
+                    game = 0
+                    break
+                Xcur = game
 
-                for temp in winBlock:
-                    cross.update(2, Xpre, place(2,temp))
-                scores = cross.getBoard()
-                # printScores()
-                for temp in badBlock:
-                    cross.update(1, Xpre, place(2,temp))
-                scores = cross.getBoard()
-                # printScores()
-                break
-            if checkResult(game) == 3:
-                cross.update(3, Xpre, game)
-                break
-            Xcur = game
+                side = not side
+                # print('--------------------------------------------------')
 
-            side = not side
-            # print('--------------------------------------------------')
-
-circle.toFile()
-cross.toFile()
+    circle.toFile()
+    cross.toFile()
