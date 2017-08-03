@@ -187,11 +187,6 @@ def train():
         print('\033c')
         print('Training progress : [' + finbar + unfinbar + '] ( ' + str(finished*2) + '% )')
 
-    while times != 0:
-        if times % 5000 == 0:
-            print('Remaining train times : ' + str(times))
-            jump = jump - 0.03
-
         game = 0
         times -= 1
         Ocur = game
@@ -368,6 +363,3 @@ def train():
 
     circle.toJSON()
     cross.toJSON()
-
-    circle.toFile()
-    cross.toFile()
