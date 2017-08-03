@@ -1,6 +1,5 @@
 import json
 
-=======
 discount = 0.9
 learnRate = 0.1
 scores = {}
