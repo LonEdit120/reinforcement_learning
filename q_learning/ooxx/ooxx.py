@@ -1,6 +1,10 @@
 import random
 import circle
 import cross
+<<<<<<< HEAD
+import json
+=======
+>>>>>>> c589314ec99f4f569920fa4c594261375289a06b
 
 print('\033c')
 
@@ -11,14 +15,22 @@ print(' 3 | 4 | 5 ')
 print('-----------')
 print(' 6 | 7 | 8 ')
 
+<<<<<<< HEAD
+jump = 0.3
+=======
 jump = 0.6
+>>>>>>> c589314ec99f4f569920fa4c594261375289a06b
 Opre = 0
 Ocur = 0
 Xpre = 0
 Xcur = 0
 game = 0
 side = True
+<<<<<<< HEAD
+times = 500000
+=======
 times = 100000
+>>>>>>> c589314ec99f4f569920fa4c594261375289a06b
 dangerZone = []
 
 def getValueAtIndex(index, res):
@@ -166,11 +178,33 @@ def train():
     badBlock = []
     # game = 120022100
 
+<<<<<<< HEAD
+    circle.getJSON()
+    cross.getJSON()
+    percent = int(times/100)
+    fulltime = times
+    while times != 0:
+        if times % 5000 == 0:
+            circle.toJSON()
+            cross.toJSON()
+            jump = jump - 0.015
+        finished = int(((fulltime - times)/percent)/2)
+        unfinished = 50 - finished
+        finbar = ''
+        for i in range(finished):
+            finbar = finbar + '#'
+        unfinbar = ''
+        for i in range(unfinished):
+            unfinbar = unfinbar + '-'
+        print('\033c')
+        print('Training progress : [' + finbar + unfinbar + '] ( ' + str(finished*2) + '% )')
+=======
 
     while times != 0:
         if times % 5000 == 0:
             print('Remaining train times : ' + str(times))
             jump = jump - 0.03
+>>>>>>> c589314ec99f4f569920fa4c594261375289a06b
 
         game = 0
         times -= 1
@@ -343,6 +377,14 @@ def train():
 
                 side = not side
                 # print('--------------------------------------------------')
+<<<<<<< HEAD
+    print('\033c')
+    print('Training progress : [##################################################] ( 100% )')
+
+    circle.toJSON()
+    cross.toJSON()
+=======
 
     circle.toFile()
     cross.toFile()
+>>>>>>> c589314ec99f4f569920fa4c594261375289a06b
